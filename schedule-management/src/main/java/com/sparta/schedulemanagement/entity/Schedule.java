@@ -23,6 +23,14 @@ public class Schedule extends Timestamped{
     @Column(name = "content")
     private String content;
 
+    @OneToMany(mappedBy = "schedule", cascade = CascadeType.PERSIST, orphanRemoval = true)
+    private List<Comment> commentList = new ArrayList<>();
+
+    public void addComment(Comment comment) {
+        this.commentList.add(comment);
+        comment.setSchedule(this);
+    }
+
     public Schedule(ScheduleRequestDto requestDto) {
         this.username = requestDto.getUsername();
         this.title = requestDto.getTitle();

@@ -33,4 +33,9 @@ public class ScheduleController {
     public List<ScheduleResponseDto> findAllSchedules(@RequestParam(defaultValue = "0") int page, @RequestParam(defaultValue = "10") int size) {
         return scheduleService.findAllSchedules(page, size);
     }
+
+    @DeleteMapping("/{id}")
+    public String deleteSchedule(@PathVariable int id) {
+        return scheduleService.deleteSchedule(id);
+    }
 }

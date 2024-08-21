@@ -13,6 +13,7 @@ public class ScheduleResponseDto {
     private String content;
     private LocalDateTime createdAt;
     private LocalDateTime modifiedAt;
+    private int commentsCount;
 
     public ScheduleResponseDto(Schedule schedule) {
         this.id = schedule.getId();
@@ -21,5 +22,6 @@ public class ScheduleResponseDto {
         this.content = schedule.getContent();
         this.createdAt = schedule.getCreatedAt();
         this.modifiedAt = schedule.getLastModifiedAt();
+        this.commentsCount = schedule.getCommentList().size();
     }
 }

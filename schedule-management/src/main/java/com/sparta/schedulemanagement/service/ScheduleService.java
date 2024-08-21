@@ -49,4 +49,9 @@ public class ScheduleService {
         Page<ScheduleResponseDto> scheduleResponseDtoPage = scheduleRepository.findAll(pageable).map(ScheduleResponseDto::new);
         return scheduleResponseDtoPage.getContent();
     }
+
+    public String deleteSchedule(int id) {
+        scheduleRepository.deleteById(id);
+        return "Schedule deleted";
+    }
 }
