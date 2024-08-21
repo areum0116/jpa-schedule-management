@@ -6,6 +6,8 @@ import com.sparta.schedulemanagement.service.ScheduleService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
+
 @RestController
 @RequestMapping("/schedules")
 @RequiredArgsConstructor
@@ -25,5 +27,10 @@ public class ScheduleController {
     @PutMapping("/{id}")
     public ScheduleResponseDto updateSchedule(@PathVariable int id, @RequestBody ScheduleRequestDto requestDto) {
         return scheduleService.updateSchedule(id, requestDto);
+    }
+
+    @GetMapping
+    public List<ScheduleResponseDto> findAllSchedules(@RequestParam(defaultValue = "0") int page, @RequestParam(defaultValue = "10") int size) {
+        return scheduleService.findAllSchedules(page, size);
     }
 }
