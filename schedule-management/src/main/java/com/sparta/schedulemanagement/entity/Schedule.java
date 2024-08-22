@@ -16,15 +16,18 @@ public class Schedule extends Timestamped{
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int id;
-    @Column(name = "username", nullable = false)
-    private String username;
+    @Column(name = "user_id")
+    private int user_id;
     @Column(name = "title")
     private String title;
     @Column(name = "content")
     private String content;
 
     @OneToMany(mappedBy = "schedule", cascade = CascadeType.PERSIST, orphanRemoval = true)
-    private List<Comment> commentList = new ArrayList<>();
+    private final List<Comment> commentList = new ArrayList<>();
+
+    @OneToMany(mappedBy = "schedule", cascade = CascadeType.PERSIST, orphanRemoval = true)
+    private final List<Manager> managerList = new ArrayList<>();
 
     public void addComment(Comment comment) {
         this.commentList.add(comment);
@@ -32,13 +35,13 @@ public class Schedule extends Timestamped{
     }
 
     public Schedule(ScheduleRequestDto requestDto) {
-        this.username = requestDto.getUsername();
+        this.user_id = requestDto.getUser_id();
         this.title = requestDto.getTitle();
         this.content = requestDto.getContent();
     }
 
     public void update(ScheduleRequestDto requestDto) {
-        this.username = requestDto.getUsername();
+        this.user_id = requestDto.getUser_id();
         this.title = requestDto.getTitle();
         this.content = requestDto.getContent();
     }

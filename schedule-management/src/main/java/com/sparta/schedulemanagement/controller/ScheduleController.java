@@ -15,8 +15,8 @@ public class ScheduleController {
     private final ScheduleService scheduleService;
 
     @GetMapping("/{id}")
-    public ScheduleResponseDto findById(@PathVariable int id) {
-        return scheduleService.findById(id);
+    public ScheduleResponseDto getScheduleById(@PathVariable int id) {
+        return scheduleService.getScheduleById(id);
     }
 
     @PostMapping
@@ -30,8 +30,8 @@ public class ScheduleController {
     }
 
     @GetMapping
-    public List<ScheduleResponseDto> findAllSchedules(@RequestParam(defaultValue = "0") int page, @RequestParam(defaultValue = "10") int size) {
-        return scheduleService.findAllSchedules(page, size);
+    public List<ScheduleResponseDto> getAllSchedules(@RequestParam(defaultValue = "0") int page, @RequestParam(defaultValue = "10") int size) {
+        return scheduleService.getAllSchedules(page, size);
     }
 
     @DeleteMapping("/{id}")

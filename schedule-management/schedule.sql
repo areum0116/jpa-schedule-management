@@ -14,3 +14,21 @@ create table comment(
                         schedule_id int not null,
                         foreign key (schedule_id) references schedule(id)
 );
+
+create table user(
+                     id int not null primary key auto_increment,
+                     username varchar(100) not null,
+                     email varchar(200) not null
+);
+
+create table manager(
+                        id int not null primary key auto_increment,
+                        schedule_id int not null,
+                        user_id int not null,
+                        foreign key (schedule_id) references schedule(id),
+                        foreign key (user_id) references user(id)
+);
+
+alter table schedule drop column username;
+
+alter table schedule add user_id int references user(id);

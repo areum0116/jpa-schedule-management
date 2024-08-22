@@ -32,7 +32,7 @@ public class CommentService {
         );
     }
 
-    public List<CommentResponseDto> getComments(int scheduleId) {
+    public List<CommentResponseDto> getAllComments(int scheduleId) {
         Schedule schedule = findScheduleById(scheduleId);
         List<Comment> commentList = commentRepository.findCommentsBySchedule(schedule);
         List<CommentResponseDto> commentResponseDtoList = new ArrayList<>();
