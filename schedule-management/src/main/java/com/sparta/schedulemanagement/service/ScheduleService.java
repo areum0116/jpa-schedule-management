@@ -40,7 +40,8 @@ public class ScheduleService {
 
     public ScheduleResponseDto getScheduleById(int id) {
         Schedule schedule = findScheduleById(id);
-        return new ScheduleResponseDto(schedule);
+        User user = findUserById(schedule.getUser_id());
+        return new ScheduleResponseDto(schedule, user);
     }
 
     public ScheduleResponseDto createSchedule(ScheduleRequestDto requestDto) {
