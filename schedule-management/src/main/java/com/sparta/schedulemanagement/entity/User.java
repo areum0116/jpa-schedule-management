@@ -26,6 +26,10 @@ public class User extends Timestamped{
     @Column(nullable = false)
     private String password;
 
+    @Column(nullable = false)
+    @Enumerated(EnumType.STRING)
+    private UserRoleEnum role;
+
     @OneToMany(mappedBy = "user", cascade = CascadeType.PERSIST, orphanRemoval = true)
     private final List<Manager> managerList = new ArrayList<>();
 
@@ -35,12 +39,16 @@ public class User extends Timestamped{
         this.password = userRequestDto.getPassword();
     }
 
+    public User(String username, String password, String email, UserRoleEnum role) {
+        this.username = username;
+        this.password = password;
+        this.email = email;
+        this.role = role;
+    }
+
     public void update(UserRequestDto userRequestDto) {
         this.username = userRequestDto.getUsername();
         this.email = userRequestDto.getEmail();
     }
 
-    public void setEncodedPassword(String encodedPassword) {
-        this.password = encodedPassword;
-    }
 }

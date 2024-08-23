@@ -34,3 +34,5 @@ alter table schedule drop column username;
 alter table schedule add user_id int references user(id);
 
 alter table user add password varchar(150);
+
+alter table user add role varchar(100);

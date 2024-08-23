@@ -49,7 +49,7 @@ public class AuthFilter implements Filter {
                         () -> new NullPointerException("User not found")
                 );
 
-                request.setAttribute("user", user);
+                request.setAttribute("user_role", user.getRole());
                 httpServletResponse.setHeader(JwtUtil.AUTHORIZATION_HEADER, token);
                 chain.doFilter(request, response);
             } else {
