@@ -1,5 +1,6 @@
 package com.sparta.schedulemanagement.controller;
 
+import com.sparta.schedulemanagement.dto.LoginRequestDto;
 import com.sparta.schedulemanagement.dto.UserRequestDto;
 import com.sparta.schedulemanagement.dto.UserResponseDto;
 import com.sparta.schedulemanagement.service.UserService;
@@ -22,7 +23,7 @@ public class UserController {
         return userService.getAllUsers();
     }
 
-    @PostMapping
+    @PostMapping("/register")
     public UserResponseDto signUp(@RequestBody @Valid UserRequestDto userRequestDto, HttpServletResponse res) {
         return userService.signUp(userRequestDto, res);
     }
@@ -40,5 +41,10 @@ public class UserController {
     @DeleteMapping("/{id}")
     public String deleteUser(@PathVariable int id) {
         return userService.deleteUser(id);
+    }
+
+    @PostMapping("/login")
+    public String login(@RequestBody LoginRequestDto loginRequestDto, HttpServletResponse res) {
+        return userService.login(loginRequestDto, res);
     }
 }

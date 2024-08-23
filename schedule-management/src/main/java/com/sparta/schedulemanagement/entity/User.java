@@ -39,4 +39,8 @@ public class User extends Timestamped{
         this.username = userRequestDto.getUsername();
         this.email = userRequestDto.getEmail();
     }
+
+    public void setEncodedPassword(String encodedPassword) {
+        this.password = encodedPassword;
+    }
 }

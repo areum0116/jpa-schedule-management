@@ -1,12 +1,12 @@
 package com.sparta.schedulemanagement.service;
 
 import com.sparta.schedulemanagement.config.PasswordEncoder;
+import com.sparta.schedulemanagement.dto.LoginRequestDto;
 import com.sparta.schedulemanagement.dto.UserRequestDto;
 import com.sparta.schedulemanagement.dto.UserResponseDto;
 import com.sparta.schedulemanagement.entity.User;
 import com.sparta.schedulemanagement.jwt.JwtUtil;
 import com.sparta.schedulemanagement.repository.UserRepository;
-import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -58,6 +58,7 @@ public class UserService {
         jwtUtil.addJwtToCookie(token, res);
 
         User user = new User(userRequestDto);
+        user.setEncodedPassword(password);
         userRepository.save(user);
         return new UserResponseDto(user);
     }
@@ -76,5 +77,23 @@ public class UserService {
     public String deleteUser(int id) {
         userRepository.deleteById(id);
         return "User with id " + id + " deleted";
+    }
+
+    public String login(LoginRequestDto loginRequestDto, HttpServletResponse res) {
+        Optional<User> user = userRepository.findByEmail(loginRequestDto.getEmail());
+
+        if(user.isEmpty()) {
+            res.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
+            return "Invalid email or password";
+        }
+
+        if(!passwordEncoder.matches(loginRequestDto.getPassword(), user.get().getPassword())) {
+            res.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
+            return "Invalid email or password";
+        }
+
+        String token = jwtUtil.createToken(user.get().getUsername());
+        jwtUtil.addJwtToCookie(token, res);
+        return token;
     }
 }
