@@ -8,4 +8,5 @@ public class UserRequestDto {
     private String username;
     @Email
     private String email;
+    private String password;
 }

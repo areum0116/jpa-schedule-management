@@ -3,6 +3,7 @@ package com.sparta.schedulemanagement.controller;
 import com.sparta.schedulemanagement.dto.UserRequestDto;
 import com.sparta.schedulemanagement.dto.UserResponseDto;
 import com.sparta.schedulemanagement.service.UserService;
+import jakarta.servlet.http.HttpServletResponse;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
@@ -22,8 +23,8 @@ public class UserController {
     }
 
     @PostMapping
-    public UserResponseDto createUser(@RequestBody @Valid UserRequestDto userRequestDto) {
-        return userService.createUser(userRequestDto);
+    public UserResponseDto signUp(@RequestBody @Valid UserRequestDto userRequestDto, HttpServletResponse res) {
+        return userService.signUp(userRequestDto, res);
     }
 
     @GetMapping("/{id}")
