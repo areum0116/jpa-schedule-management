@@ -21,6 +21,8 @@ public class ScheduleResponseDto {
     private String username;
     private String email;
 
+    private String weather;
+
     public ScheduleResponseDto(Schedule schedule) {
         this.id = schedule.getId();
         this.user_id = schedule.getUser_id();
@@ -29,6 +31,7 @@ public class ScheduleResponseDto {
         this.createdAt = schedule.getCreatedAt();
         this.modifiedAt = schedule.getLastModifiedAt();
         this.commentsCount = schedule.getCommentList().size();
+        this.weather = schedule.getWeather();
     }
 
     public ScheduleResponseDto(Schedule schedule, User user) {

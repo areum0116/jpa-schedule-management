@@ -2,6 +2,7 @@ package com.sparta.schedulemanagement.service;
 
 import com.sparta.schedulemanagement.dto.ScheduleRequestDto;
 import com.sparta.schedulemanagement.dto.ScheduleResponseDto;
+import com.sparta.schedulemanagement.dto.WeatherResponseDto;
 import com.sparta.schedulemanagement.entity.Manager;
 import com.sparta.schedulemanagement.entity.Schedule;
 import com.sparta.schedulemanagement.entity.User;
@@ -15,8 +16,13 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.client.RestTemplate;
 
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
+import java.util.Arrays;
 import java.util.List;
+import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
@@ -25,6 +31,7 @@ public class ScheduleService {
     private final ScheduleRepository scheduleRepository;
     private final UserRepository userRepository;
     private final ManagerRepository managerRepository;
+    private final RestTemplate restTemplate;
 
     private Schedule findScheduleById(int id) {
         return scheduleRepository.findById(id).orElseThrow(
@@ -38,6 +45,15 @@ public class ScheduleService {
         );
     }
 
+    private WeatherResponseDto getTodayWeather() {
+        WeatherResponseDto[] responseDtos = restTemplate.getForObject("https://f-api.github.io/f-api/weather.json", WeatherResponseDto[].class);
+        List<WeatherResponseDto> weatherList = Arrays.asList(responseDtos);
+        String today = LocalDate.now().format(DateTimeFormatter.ofPattern("MM-dd"));
+        Optional<WeatherResponseDto> todayWeather = weatherList.stream()
+                .filter(weather -> today.equals(weather.getDate())).findFirst();
+        return todayWeather.orElse(null);
+    }
+
     public ScheduleResponseDto getScheduleById(int id) {
         Schedule schedule = findScheduleById(id);
         User user = findUserById(schedule.getUser_id());
@@ -46,11 +62,17 @@ public class ScheduleService {
 
     public ScheduleResponseDto createSchedule(ScheduleRequestDto requestDto) {
         User user = findUserById(requestDto.getUser_id());
-        Schedule schedule = scheduleRepository.save(new Schedule(requestDto));
+        Schedule schedule = new Schedule(requestDto);
+
+        WeatherResponseDto todayWeather = getTodayWeather();
+        schedule.setWeather(todayWeather.getWeather());
+        schedule = scheduleRepository.save(schedule);
+
         Manager manager = new Manager();
         manager.setSchedule(schedule);
         manager.setUser(user);
         managerRepository.save(manager);
+
         return new ScheduleResponseDto(schedule);
     }
 

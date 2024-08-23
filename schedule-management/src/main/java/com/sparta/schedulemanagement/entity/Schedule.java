@@ -4,6 +4,7 @@ import com.sparta.schedulemanagement.dto.ScheduleRequestDto;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.Setter;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -16,12 +17,18 @@ public class Schedule extends Timestamped{
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int id;
+
     @Column(name = "user_id")
     private int user_id;
+
     @Column(name = "title")
     private String title;
+
     @Column(name = "content")
     private String content;
+
+    @Setter
+    private String weather;
 
     @OneToMany(mappedBy = "schedule", cascade = CascadeType.PERSIST, orphanRemoval = true)
     private final List<Comment> commentList = new ArrayList<>();
