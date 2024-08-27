@@ -20,4 +20,8 @@ public class UserResponseDto {
         this.createdAt = user.getCreatedAt();
         this.modifiedAt = user.getLastModifiedAt();
     }
+
+    public static UserResponseDto entityToDto(User user) {
+        return new UserResponseDto(user);
+    }
 }

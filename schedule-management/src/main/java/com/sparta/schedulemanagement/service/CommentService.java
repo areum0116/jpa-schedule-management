@@ -32,7 +32,7 @@ public class CommentService {
         );
     }
 
-    public List<CommentResponseDto> getAllComments(int scheduleId) {
+    public List<CommentResponseDto> getCommentList(int scheduleId) {
         Schedule schedule = findScheduleById(scheduleId);
         List<Comment> commentList = commentRepository.findCommentsBySchedule(schedule);
         List<CommentResponseDto> commentResponseDtoList = new ArrayList<>();
@@ -45,13 +45,12 @@ public class CommentService {
     public CommentResponseDto createComment(int scheduleId, CommentRequestDto commentRequestDto) {
         Schedule schedule = findScheduleById(scheduleId);
         Comment comment = new Comment(commentRequestDto);
-        comment.setSchedule(schedule);
-        commentRepository.save(comment);
-        return new CommentResponseDto(comment);
+        schedule.addComment(comment);
+        return CommentResponseDto.entityToDto(commentRepository.save(comment));
     }
 
     public CommentResponseDto getCommentById(int commentId) {
-        return new CommentResponseDto(findCommentById(commentId));
+        return CommentResponseDto.entityToDto(findCommentById(commentId));
     }
 
     @Transactional
@@ -60,11 +59,10 @@ public class CommentService {
         Comment comment = findCommentById(commentId);
         comment.setSchedule(schedule);
         comment.update(commentRequestDto);
-        return new CommentResponseDto(comment);
+        return CommentResponseDto.entityToDto(comment);
     }
 
-
-    public String deleteComment(int scheduleId, int commentId) {
+    public String deleteComment(int commentId) {
         commentRepository.deleteById(commentId);
         return "Comment deleted";
     }

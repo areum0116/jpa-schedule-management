@@ -20,4 +20,8 @@ public class CommentResponseDto {
         this.createdAt = comment.getCreatedAt();
         this.modifiedAt = comment.getLastModifiedAt();
     }
+
+    public static CommentResponseDto entityToDto(Comment comment) {
+        return new CommentResponseDto(comment);
+    }
 }

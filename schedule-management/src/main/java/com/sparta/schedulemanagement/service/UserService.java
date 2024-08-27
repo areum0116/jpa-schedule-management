@@ -10,15 +10,16 @@ import com.sparta.schedulemanagement.entity.UserRoleEnum;
 import com.sparta.schedulemanagement.jwt.JwtUtil;
 import com.sparta.schedulemanagement.repository.UserRepository;
 import jakarta.servlet.ServletRequest;
-import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import javax.security.sasl.AuthenticationException;
 import java.io.IOException;
-import java.net.http.HttpHeaders;
+import java.nio.file.AccessDeniedException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -37,7 +38,8 @@ public class UserService {
         );
     }
 
-    private final String ADMIN_TOKEN = "AAABnvxRVklrnYxKZ0aHgTBcXukeZygoC";
+    @Value("${ADMIN_TOKEN}")
+    private String ADMIN_TOKEN;
 
     public List<UserResponseDto> getAllUsers() {
         List<User> users = userRepository.findAll();
@@ -77,15 +79,15 @@ public class UserService {
         User user = new User(username, password, email, role);
 
         userRepository.save(user);
-        return new UserResponseDto(user);
+        return UserResponseDto.entityToDto(user);
     }
 
     public UserResponseDto getUserById(int id) {
-        return new UserResponseDto(findUserById(id));
+        return UserResponseDto.entityToDto(findUserById(id));
     }
 
     @Transactional
-    public UserResponseDto updateUser(int id, @Valid UserRequestDto userRequestDto, HttpServletResponse res, ServletRequest req) throws IOException {
+    public UserResponseDto updateUser(int id, @Valid UserRequestDto userRequestDto, ServletRequest req) throws IOException {
         User user = findUserById(id);
 
         UserRoleEnum currentRole = (UserRoleEnum) req.getAttribute("user_role");
@@ -93,32 +95,23 @@ public class UserService {
             user.update(userRequestDto);
             return new UserResponseDto(user);
         }
-
-        res.sendError(HttpServletResponse.SC_FORBIDDEN, "Only ADMIN users can update user");
-        return null;
+        else throw new AccessDeniedException("Only ADMIN users can update user");
     }
 
-    public String deleteUser(int id, HttpServletResponse res, ServletRequest req) throws IOException {
+    public String deleteUser(int id, ServletRequest req) throws IOException {
         UserRoleEnum currentRole = (UserRoleEnum) req.getAttribute("user_role");
         if(currentRole == UserRoleEnum.ADMIN) {
             userRepository.deleteById(id);
             return "User with id " + id + " deleted";
         }
-        res.sendError(HttpServletResponse.SC_FORBIDDEN, "Only ADMIN users can delete user");
-        return "Only ADMIN users can delete user";
+        else throw new AccessDeniedException("Only ADMIN users can delete user");
     }
 
-    public String login(LoginRequestDto loginRequestDto, HttpServletResponse res) {
+    public String login(LoginRequestDto loginRequestDto, HttpServletResponse res) throws AuthenticationException {
         Optional<User> user = userRepository.findByEmail(loginRequestDto.getEmail());
 
-        if(user.isEmpty()) {
-            res.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
-            return "Invalid email or password";
-        }
-
-        if(!passwordEncoder.matches(loginRequestDto.getPassword(), user.get().getPassword())) {
-            res.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
-            return "Invalid email or password";
+        if(user.isEmpty() || !passwordEncoder.matches(loginRequestDto.getPassword(), user.get().getPassword())) {
+            throw new AuthenticationException("Invalid username or password");
         }
 
         String token = jwtUtil.createToken(user.get().getUsername(), user.get().getRole());

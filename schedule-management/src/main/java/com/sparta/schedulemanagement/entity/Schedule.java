@@ -11,30 +11,24 @@ import java.util.List;
 
 @Entity
 @Getter
-@Table(name = "schedule")
 @NoArgsConstructor
 public class Schedule extends Timestamped{
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int id;
 
-    @Column(name = "user_id")
     private int user_id;
-
-    @Column(name = "title")
     private String title;
-
-    @Column(name = "content")
     private String content;
 
     @Setter
     private String weather;
 
-    @OneToMany(mappedBy = "schedule", cascade = CascadeType.PERSIST, orphanRemoval = true)
+    @OneToMany(mappedBy = "schedule", cascade = CascadeType.ALL, orphanRemoval = true)
     private final List<Comment> commentList = new ArrayList<>();
 
-    @OneToMany(mappedBy = "schedule", cascade = CascadeType.PERSIST, orphanRemoval = true)
-    private final List<Manager> managerList = new ArrayList<>();
+    @OneToMany(mappedBy = "schedule", cascade = CascadeType.PERSIST)
+    public final List<Manager> managerList = new ArrayList<>();
 
     public void addComment(Comment comment) {
         this.commentList.add(comment);

@@ -5,12 +5,8 @@ import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
-import java.util.ArrayList;
-import java.util.List;
-
 @Entity
 @Getter
-@Table(name = "user")
 @NoArgsConstructor
 public class User extends Timestamped{
     @Id
@@ -30,15 +26,6 @@ public class User extends Timestamped{
     @Enumerated(EnumType.STRING)
     private UserRoleEnum role;
 
-    @OneToMany(mappedBy = "user", cascade = CascadeType.PERSIST, orphanRemoval = true)
-    private final List<Manager> managerList = new ArrayList<>();
-
-    public User(UserRequestDto userRequestDto) {
-        this.username = userRequestDto.getUsername();
-        this.email = userRequestDto.getEmail();
-        this.password = userRequestDto.getPassword();
-    }
-
     public User(String username, String password, String email, UserRoleEnum role) {
         this.username = username;
         this.password = password;
@@ -50,5 +37,4 @@ public class User extends Timestamped{
         this.username = userRequestDto.getUsername();
         this.email = userRequestDto.getEmail();
     }
-
 }

@@ -4,6 +4,10 @@ import com.sparta.schedulemanagement.dto.ScheduleRequestDto;
 import com.sparta.schedulemanagement.dto.ScheduleResponseDto;
 import com.sparta.schedulemanagement.service.ScheduleService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.web.PageableDefault;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -15,27 +19,27 @@ public class ScheduleController {
     private final ScheduleService scheduleService;
 
     @GetMapping("/{id}")
-    public ScheduleResponseDto getScheduleById(@PathVariable int id) {
-        return scheduleService.getScheduleById(id);
+    public ResponseEntity<ScheduleResponseDto> getScheduleById(@PathVariable int id) {
+        return new ResponseEntity<>(scheduleService.getScheduleById(id), HttpStatus.OK);
     }
 
     @PostMapping
-    public ScheduleResponseDto createSchedule(@RequestBody ScheduleRequestDto requestDto) {
-        return scheduleService.createSchedule(requestDto);
+    public ResponseEntity<ScheduleResponseDto> createSchedule(@RequestBody ScheduleRequestDto requestDto) {
+        return new ResponseEntity<>(scheduleService.createSchedule(requestDto), HttpStatus.CREATED);
     }
 
     @PutMapping("/{id}")
-    public ScheduleResponseDto updateSchedule(@PathVariable int id, @RequestBody ScheduleRequestDto requestDto) {
-        return scheduleService.updateSchedule(id, requestDto);
+    public ResponseEntity<ScheduleResponseDto> updateSchedule(@PathVariable int id, @RequestBody ScheduleRequestDto requestDto) {
+        return new ResponseEntity<>(scheduleService.updateSchedule(id, requestDto), HttpStatus.OK);
     }
 
     @GetMapping
-    public List<ScheduleResponseDto> getAllSchedules(@RequestParam(defaultValue = "0") int page, @RequestParam(defaultValue = "10") int size) {
-        return scheduleService.getAllSchedules(page, size);
+    public ResponseEntity<List<ScheduleResponseDto>> getScheduleList(@PageableDefault(size = 10) Pageable pageable) {
+        return ResponseEntity.ok(scheduleService.getScheduleList(pageable));
     }
 
     @DeleteMapping("/{id}")
-    public String deleteSchedule(@PathVariable int id) {
-        return scheduleService.deleteSchedule(id);
+    public ResponseEntity<String> deleteSchedule(@PathVariable int id) {
+        return ResponseEntity.ok(scheduleService.deleteSchedule(id));
     }
 }

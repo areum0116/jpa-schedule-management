@@ -60,6 +60,7 @@ public class ScheduleService {
         return new ScheduleResponseDto(schedule, user);
     }
 
+
     public ScheduleResponseDto createSchedule(ScheduleRequestDto requestDto) {
         User user = findUserById(requestDto.getUser_id());
         Schedule schedule = new Schedule(requestDto);
@@ -68,12 +69,10 @@ public class ScheduleService {
         schedule.setWeather(todayWeather.getWeather());
         schedule = scheduleRepository.save(schedule);
 
-        Manager manager = new Manager();
-        manager.setSchedule(schedule);
-        manager.setUser(user);
+        Manager manager = new Manager(schedule, user);
         managerRepository.save(manager);
 
-        return new ScheduleResponseDto(schedule);
+        return ScheduleResponseDto.entityToDto(schedule);
     }
 
     @Transactional
@@ -84,11 +83,11 @@ public class ScheduleService {
         User user = findUserById(requestDto.getUser_id());
         managerRepository.save(new Manager(schedule, user));
         scheduleRepository.save(schedule);
-        return new ScheduleResponseDto(schedule);
+        return ScheduleResponseDto.entityToDto(schedule);
     }
 
-    public List<ScheduleResponseDto> getAllSchedules(int page, int size) {
-        Pageable pageable = PageRequest.of(page, size, Sort.by("lastModifiedAt").descending());
+    public List<ScheduleResponseDto> getScheduleList(Pageable pageable) {
+        pageable = PageRequest.of(pageable.getPageNumber(), pageable.getPageSize(), Sort.by("lastModifiedAt").descending());
         Page<ScheduleResponseDto> scheduleResponseDtoPage = scheduleRepository.findAll(pageable).map(ScheduleResponseDto::new);
         return scheduleResponseDtoPage.getContent();
     }

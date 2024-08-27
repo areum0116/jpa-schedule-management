@@ -4,6 +4,8 @@ import com.sparta.schedulemanagement.dto.CommentRequestDto;
 import com.sparta.schedulemanagement.dto.CommentResponseDto;
 import com.sparta.schedulemanagement.service.CommentService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -16,27 +18,27 @@ public class CommentController {
     private final CommentService commentService;
 
     @GetMapping
-    public List<CommentResponseDto> getAllComments(@PathVariable int id) {
-        return commentService.getAllComments(id);
+    public ResponseEntity<List<CommentResponseDto>> getCommentList(@PathVariable int id) {
+        return new ResponseEntity<>(commentService.getCommentList(id), HttpStatus.OK);
     }
 
     @PostMapping
-    public CommentResponseDto createComment(@PathVariable int id, @RequestBody CommentRequestDto commentRequestDto) {
-        return commentService.createComment(id, commentRequestDto);
+    public ResponseEntity<CommentResponseDto> createComment(@PathVariable int id, @RequestBody CommentRequestDto commentRequestDto) {
+        return new ResponseEntity<>(commentService.createComment(id, commentRequestDto), HttpStatus.CREATED);
     }
 
     @GetMapping("/{comment_id}")
-    public CommentResponseDto getCommentById(@PathVariable int id, @PathVariable int comment_id) {
-        return commentService.getCommentById(comment_id);
+    public ResponseEntity<CommentResponseDto> getCommentById(@PathVariable int comment_id) {
+        return ResponseEntity.ok(commentService.getCommentById(comment_id));
     }
 
     @PutMapping("/{comment_id}")
-    public CommentResponseDto updateComment(@PathVariable int id ,@PathVariable int comment_id, @RequestBody CommentRequestDto commentRequestDto) {
-        return commentService.updateComment(id, comment_id, commentRequestDto);
+    public ResponseEntity<CommentResponseDto> updateComment(@PathVariable int id ,@PathVariable int comment_id, @RequestBody CommentRequestDto commentRequestDto) {
+        return ResponseEntity.ok(commentService.updateComment(id, comment_id, commentRequestDto));
     }
 
     @DeleteMapping("/{comment_id}")
-    public String deleteComment(@PathVariable int id, @PathVariable int comment_id) {
-        return commentService.deleteComment(id, comment_id);
+    public ResponseEntity<String> deleteComment(@PathVariable int comment_id) {
+        return ResponseEntity.ok(commentService.deleteComment(comment_id));
     }
 }

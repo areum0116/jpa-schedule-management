@@ -39,4 +39,8 @@ public class ScheduleResponseDto {
         this.username = user.getUsername();
         this.email = user.getEmail();
     }
+
+    public static ScheduleResponseDto entityToDto(Schedule schedule) {
+        return new ScheduleResponseDto(schedule);
+    }
 }
